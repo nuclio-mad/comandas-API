@@ -1,6 +1,7 @@
 // Importaciones - módulos que necesito
 const express = require('express');
 const fs = require('fs');
+const comandasRouter = require('./routes/comandasRouter');
 
 // Instancio mi Express App
 const app = express();
@@ -13,58 +14,61 @@ app.use(express.urlencoded({ extended: true }));
 // De esta forma mi Express es capaz de entender un JSON
 app.use(express.json());
 
-// ENDPOINTS
-app.post('/comanda/add', (req, res) => {
-    console.log('Endpoint comanda/add');
-    // Datos comanda entrante
-    const comanda = req.body;
-    const { camarero, productos } = comanda;
+// Routing
+app.use('/comandas', comandasRouter);
 
-    // Leo comandas existentes
-    fs.readFile('comandas.db', {encoding: 'utf-8'}, (err, data) => {
-        if(err) throw new Error('Error al leer archivo');
+// ENDPOINTS ORIGINALES
+// app.post('/comanda/add', (req, res) => {
+//     console.log('Endpoint comanda/add');
+//     // Datos comanda entrante
+//     const comanda = req.body;
+//     const { camarero, productos } = comanda;
 
-        // Parseo el string que he leído de comandas.db para poder trabajar con él
-        // como un objeto JS
-        let listaComandas = JSON.parse(data);
-        // Obtengo el número de comandas que hay actualmente
-        const numComandas = Object.keys(listaComandas).length;
+//     // Leo comandas existentes
+//     fs.readFile('comandas.db', {encoding: 'utf-8'}, (err, data) => {
+//         if(err) throw new Error('Error al leer archivo');
 
-        // Estructuro mi nueva comanda:
-        const newComanda = {
-            id: [numComandas + 1],
-            camarero: camarero,
-            date: new Date(),
-            productos: productos,
-            completa: false
-        };
+//         // Parseo el string que he leído de comandas.db para poder trabajar con él
+//         // como un objeto JS
+//         let listaComandas = JSON.parse(data);
+//         // Obtengo el número de comandas que hay actualmente
+//         const numComandas = Object.keys(listaComandas).length;
 
-        // Añado nueva comanda a lista de comandas y convierto todo en un string
-        // para guardarlo en el archivo
-        listaComandas = { ...listaComandas, [newComanda.id]: newComanda };
-        listaComandas = JSON.stringify(listaComandas);
+//         // Estructuro mi nueva comanda:
+//         const newComanda = {
+//             id: [numComandas + 1],
+//             camarero: camarero,
+//             date: new Date(),
+//             productos: productos,
+//             completa: false
+//         };
 
-        // Escribo el contenido en el archivo
-        fs.writeFile('comandas.db', listaComandas, {flag: 'w'}, (err) => {
-            if(err) throw new Error('Error al escribir archivo'); 
-        });
+//         // Añado nueva comanda a lista de comandas y convierto todo en un string
+//         // para guardarlo en el archivo
+//         listaComandas = { ...listaComandas, [newComanda.id]: newComanda };
+//         listaComandas = JSON.stringify(listaComandas);
 
-        // Envío respuesta al cliente indicándole que todo ha ido guay
-        res.send(`¡Oído cocina!. La comanda se ha registrado con nº: ${numComandas + 1}`);
-    });
-});
+//         // Escribo el contenido en el archivo
+//         fs.writeFile('comandas.db', listaComandas, {flag: 'w'}, (err) => {
+//             if(err) throw new Error('Error al escribir archivo'); 
+//         });
 
-app.get('/comanda/details/:id', (req, res) => {
-    console.log('Endpoint comanda/details/:id');
-    // Devolver comanda con ID :id
-});
+//         // Envío respuesta al cliente indicándole que todo ha ido guay
+//         res.send(`¡Oído cocina!. La comanda se ha registrado con nº: ${numComandas + 1}`);
+//     });
+// });
 
-app.get('/comanda/list', (req, res) => {
-    // recibir la nueva comanda y guardarla en vble
-    // escribir la nueva comanda en el archivo .DB
-    // enviar respuesta de que todo OK
-    console.log('Endpoint comanda/list');
-});
+// app.get('/comanda/details/:id', (req, res) => {
+//     console.log('Endpoint comanda/details/:id');
+//     // Devolver comanda con ID :id
+// });
+
+// app.get('/comanda/list', (req, res) => {
+//     // recibir la nueva comanda y guardarla en vble
+//     // escribir la nueva comanda en el archivo .DB
+//     // enviar respuesta de que todo OK
+//     console.log('Endpoint comanda/list');
+// });
 
 
 // Arranco mi servidor (trata de arrancarlo!)
