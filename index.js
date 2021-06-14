@@ -1,10 +1,23 @@
 // Importaciones - módulos que necesito
 const express = require('express');
-const fs = require('fs');
+const mongoose = require('mongoose');
+
+const cors = require('cors');
+
 const comandasRouter = require('./routes/comandasRouter');
+const clientesRouter = require('./routes/clientesRouter');
+const camareroRouter = require('./routes/camareroRouter');
 
 // Instancio mi Express App
 const app = express();
+
+mongoose.connect('mongodb://localhost:27017/restaurante', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(x => {
+    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
+  })
+  .catch(err => {
+    console.error('Error connecting to mongo', err)
+  });
 
 // Añado el parser para que sepa interpretar x-www-form-urlencoded
 // Parser: código que interpreta y entiende una cadena de caracteres
@@ -14,62 +27,14 @@ app.use(express.urlencoded({ extended: true }));
 // De esta forma mi Express es capaz de entender un JSON
 app.use(express.json());
 
+app.use(cors());
+
+
+
 // Routing
 app.use('/comandas', comandasRouter);
-
-// ENDPOINTS ORIGINALES
-// app.post('/comanda/add', (req, res) => {
-//     console.log('Endpoint comanda/add');
-//     // Datos comanda entrante
-//     const comanda = req.body;
-//     const { camarero, productos } = comanda;
-
-//     // Leo comandas existentes
-//     fs.readFile('comandas.db', {encoding: 'utf-8'}, (err, data) => {
-//         if(err) throw new Error('Error al leer archivo');
-
-//         // Parseo el string que he leído de comandas.db para poder trabajar con él
-//         // como un objeto JS
-//         let listaComandas = JSON.parse(data);
-//         // Obtengo el número de comandas que hay actualmente
-//         const numComandas = Object.keys(listaComandas).length;
-
-//         // Estructuro mi nueva comanda:
-//         const newComanda = {
-//             id: [numComandas + 1],
-//             camarero: camarero,
-//             date: new Date(),
-//             productos: productos,
-//             completa: false
-//         };
-
-//         // Añado nueva comanda a lista de comandas y convierto todo en un string
-//         // para guardarlo en el archivo
-//         listaComandas = { ...listaComandas, [newComanda.id]: newComanda };
-//         listaComandas = JSON.stringify(listaComandas);
-
-//         // Escribo el contenido en el archivo
-//         fs.writeFile('comandas.db', listaComandas, {flag: 'w'}, (err) => {
-//             if(err) throw new Error('Error al escribir archivo'); 
-//         });
-
-//         // Envío respuesta al cliente indicándole que todo ha ido guay
-//         res.send(`¡Oído cocina!. La comanda se ha registrado con nº: ${numComandas + 1}`);
-//     });
-// });
-
-// app.get('/comanda/details/:id', (req, res) => {
-//     console.log('Endpoint comanda/details/:id');
-//     // Devolver comanda con ID :id
-// });
-
-// app.get('/comanda/list', (req, res) => {
-//     // recibir la nueva comanda y guardarla en vble
-//     // escribir la nueva comanda en el archivo .DB
-//     // enviar respuesta de que todo OK
-//     console.log('Endpoint comanda/list');
-// });
-
+app.use('/clientes', clientesRouter);
+app.use('/camareros', camareroRouter);
 
 // Arranco mi servidor (trata de arrancarlo!)
 app.listen(3000, () => {

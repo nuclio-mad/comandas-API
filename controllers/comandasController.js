@@ -1,27 +1,34 @@
 const mongoose = require('mongoose');
 const Comanda = require('../models/ComandasModel');
 
-mongoose.connect('mongodb://localhost:27017/restaurante', { useNewUrlParser: true, useUnifiedTopology: true });
-
 const comandasController = {
     getComandas: async function(req, res) {
-        const listaComandas = await Comanda.find();
-        console.log('Get comandas', listaComandas);
-
-        res.json(listaComandas);
+        // const listaComandas = await Comanda.find().populate('camarero').populate('cliente');
+        Comanda.find().populate('camarero').populate('cliente')
+            .then(listaComandas => {
+                console.log('entramos y devolvemos data')
+                res.json(listaComandas);
+            })
+            .catch(err => {
+                console.log(err)
+            })
     },
     addComanda: function(req, res) {
         console.log('Add comanda');
 
+        const { camareroId, clientId, name } = req.body
+
         const newComanda = new Comanda();
-        newComanda.camarero = 'Horse Luis';
+        newComanda.camarero = camareroId;
+        newComanda.cliente = clientId;
+        newComanda.name = name;
 
         newComanda.save( (err, savedInfo) => {
             if(err) {
-                console.log('Ha ocurrido un error');
+                console.log('Ha ocurrido un error', err);
             }
 
-            res.send('¡Comanda añadida!');
+            res.json(savedInfo);
         } );
     }
 };
