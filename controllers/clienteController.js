@@ -2,6 +2,10 @@
 const Cliente = require('../models/ClienteModel');
 
 const ClienteController = {
+    getClientes: async (req, res) => {
+        const clientes = await Cliente.find();
+        res.json(clientes);
+    },
     addCliente: function(req, res) {
         console.log('Add Cliente');
 

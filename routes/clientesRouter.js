@@ -5,6 +5,7 @@ const clienteController = require('../controllers/clienteController');
 const router = express.Router();
 
 // Rutas
+router.get('/', clienteController.getClientes);
 router.post('/', clienteController.addCliente);
 
 module.exports = router;

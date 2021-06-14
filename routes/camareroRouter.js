@@ -5,6 +5,7 @@ const camareroController = require('../controllers/camareroController');
 const router = express.Router();
 
 // Rutas
+router.get('/', camareroController.getCamareros);
 router.post('/', camareroController.addCamarero);
 
 module.exports = router;

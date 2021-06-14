@@ -16,6 +16,10 @@ const CamareroController = {
 
             res.send('¡Camarero añadido!');
         } );
+    },
+    getCamareros: async function(req,res) {
+        const camareros = await Camarero.find();
+        res.json(camareros)
     }
 };
 
