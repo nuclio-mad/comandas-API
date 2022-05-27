@@ -11,7 +11,7 @@ const camareroRouter = require('./routes/camareroRouter');
 // Instancio mi Express App
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/restaurante', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://pesperaqui:copitodenieve19@cluster0.rjpqmn4.mongodb.net/restaurante?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(x => {
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
   })
